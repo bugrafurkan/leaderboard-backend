@@ -1,4 +1,3 @@
-// src/config/database.ts
 import { Pool } from 'pg';
 import { ENV } from './env';
 
@@ -8,11 +7,35 @@ export const dbPool = new Pool({
   port: ENV.DB_PORT,
   user: ENV.DB_USER,
   password: ENV.DB_PASS,
-  database: 'postgres'
+  database: 'postgres'  // Başlangıçta postgres veritabanına bağlanıyoruz
 });
 
 // Application pool that will be used after initialization
 let appPool: Pool | null = null;
+
+// Function to create tables
+async function createTables(client: any) {
+  try {
+    // Create schema first
+    console.log('Successfullye');
+    await client.query(`CREATE SCHEMA IF NOT EXISTS public`);
+    console.log('Successfullye11');
+    // Create players table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS players (
+        "playerId" SERIAL PRIMARY KEY,
+        "name" VARCHAR(255) NOT NULL,
+        "country" VARCHAR(255) NOT NULL,
+        "joinDate" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        "money" DECIMAL DEFAULT 0
+      )
+    `);
+    console.log('Tables created successfully');
+  } catch (error) {
+    console.error('Error creating tables:', error);
+    throw error;
+  }
+}
 
 // Function to initialize database and create role if it doesn't exist
 export async function initializeDatabase() {
@@ -25,59 +48,87 @@ export async function initializeDatabase() {
     `, [ENV.DB_NAME]);
 
     if (dbCheck.rowCount === 0) {
-      // Create the database if it doesn't exist
-      await client.query(`CREATE DATABASE ${ENV.DB_NAME}`);
-      console.log(`Database "${ENV.DB_NAME}" created successfully`);
-    }
+      // Release the current connection before creating database
+      client.release();
 
-    // Check if role exists
-    const roleCheck = await client.query(`
-      SELECT 1 FROM pg_roles WHERE rolname = $1
-    `, [ENV.DB_ROLE]);
+      // Get a new connection for creating database
+      const tempClient = await dbPool.connect();
+      try {
+        // Disconnect all other clients before creating DB
+        await tempClient.query(`
+          SELECT pg_terminate_backend(pid) 
+          FROM pg_stat_activity 
+          WHERE datname = $1
+        `, [ENV.DB_NAME]);
 
-    if (roleCheck.rowCount === 0) {
-      // Create the role if it doesn't exist
-      await client.query(`
-        CREATE ROLE ${ENV.DB_ROLE} WITH 
-        LOGIN 
-        PASSWORD '${ENV.DB_PASS}'
-        CREATEDB
-      `);
-      console.log(`Role "${ENV.DB_ROLE}" created successfully`);
+        // Create the database if it doesn't exist
+        await tempClient.query(`CREATE DATABASE ${ENV.DB_NAME}`);
+        console.log(`Database "${ENV.DB_NAME}" created successfully`);
+      } finally {
+        tempClient.release();
+      }
     } else {
-      console.log(`Role "${ENV.DB_ROLE}" already exists`);
+      client.release();
     }
 
-    // Grant necessary permissions
-    await client.query(`
-      GRANT ALL PRIVILEGES ON DATABASE ${ENV.DB_NAME} TO ${ENV.DB_ROLE}
-    `);
-
-    // Initialize application pool with the role
-    appPool = new Pool({
-      user: ENV.DB_ROLE,
-      host: ENV.DB_HOST,
-      database: ENV.DB_NAME,
-      password: ENV.DB_PASS,
-      port: ENV.DB_PORT,
-    });
-
-    // Update dbPool to use the new database
-    await dbPool.end();
-    Object.assign(dbPool, new Pool({
+    // Create a new pool for the target database
+    const targetPool = new Pool({
       host: ENV.DB_HOST,
       port: ENV.DB_PORT,
       user: ENV.DB_USER,
       password: ENV.DB_PASS,
-      database: ENV.DB_NAME
-    }));
+      database: ENV.DB_NAME  // Yeni oluşturulan veritabanına bağlan
+    });
 
-    console.log('Database initialization completed successfully');
+    // Get connection to new database
+    const targetClient = await targetPool.connect();
+
+    try {
+      // Check if role exists
+      const roleCheck = await targetClient.query(`
+        SELECT 1 FROM pg_roles WHERE rolname = $1
+      `, [ENV.DB_ROLE]);
+
+      if (roleCheck.rowCount === 0) {
+        // Create the role if it doesn't exist
+        await targetClient.query(`
+          CREATE ROLE ${ENV.DB_ROLE} WITH 
+          LOGIN 
+          PASSWORD '${ENV.DB_PASS}'
+          CREATEDB
+        `);
+        console.log(`Role "${ENV.DB_ROLE}" created successfully`);
+      }
+
+      console.log('Successfullye7');
+      // Grant necessary permissions
+      await targetClient.query(`
+        GRANT ALL PRIVILEGES ON DATABASE ${ENV.DB_NAME} TO ${ENV.DB_ROLE}
+      `);
+
+      // Create tables in the new database
+      await createTables(targetClient);
+
+      // Update dbPool to use the new database
+      await dbPool.end();
+      Object.assign(dbPool, targetPool);
+
+      // Initialize application pool
+      appPool = new Pool({
+        user: ENV.DB_ROLE,
+        host: ENV.DB_HOST,
+        database: ENV.DB_NAME,
+        password: ENV.DB_PASS,
+        port: ENV.DB_PORT,
+      });
+
+      console.log('Database initialization completed successfully');
+    } finally {
+      targetClient.release();
+    }
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 

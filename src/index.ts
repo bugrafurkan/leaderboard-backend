@@ -7,6 +7,7 @@ import { initQueue } from './config/queue';
 import { testDBConnection, initializeDatabase } from './config/database';
 import cron from 'node-cron';
 import { leaderboardService } from './services/leaderboardService';
+import { playerRepository} from "./repositories/playerRepository";
 
 const PORT = ENV.PORT || 3000;
 
@@ -17,6 +18,14 @@ async function startServer() {
   await testDBConnection();
   await connectRedis();
   await initQueue();
+  //await playerRepository.createTestDb();
+  console.log('player');
+  const result = await leaderboardService.getLeaderboard();
+  console.log('\n=== TOP 100 LEADERBOARD ===\n');
+  result.top100.forEach((player, index) => {
+    console.log(`${(index + 1).toString().padStart(2, ' ')}. ${player.playerId} | ${player.score} }`);
+  });
+
 
   const httpServer = createServer(app);
 

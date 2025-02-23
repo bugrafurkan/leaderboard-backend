@@ -13,7 +13,9 @@ import { LeaderboardEntry } from '../models/LeaderboardEntry';
 export const leaderboardService = {
   // Top 100 + searching player range
   async getLeaderboard(searchPlayerId?: number) {
+    console.log('leaderboardService1');
     const top100 = await leaderboardRepository.getTop100();
+    console.log('leaderboardService11', top100.length);
     let searchedPlayerRange: LeaderboardEntry[] | null = null;
 
     if (searchPlayerId) {
