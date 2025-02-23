@@ -7,8 +7,9 @@ export const leaderboardRepository = {
   // GET top 100 => for highest score / amount
   async getTop100() {
     // ZREVRANGE <key> start stop WITHSCORES
+    console.log('leaderboardService12');
     const result = await redisClient.zRangeWithScores(CURRENT_WEEK_KEY, 0, 99, { REV: true });
-
+    console.log('leaderboardService3' , result.length);
     return result.map((item) => ({
       playerId:parseInt(item.value, 10),
       score: item.score

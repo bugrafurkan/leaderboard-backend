@@ -1,5 +1,13 @@
 import { dbPool } from "../config/database";
 import { Player} from "../models/Player";
+import { leaderboardRepository} from "./leaderboardRepository";
+import {leaderboardService} from "../services/leaderboardService";
+
+//Random countries
+const COUNTRIES = [
+  'US', 'UK', 'DE', 'FR', 'TR',
+  'IT', 'ES', 'JP', 'CN', 'BR'
+];
 
 export const playerRepository = {
   async createPlayer(name: string, country: string): Promise<Player> {
@@ -50,6 +58,31 @@ export const playerRepository = {
     FROM players WHERE playerId=$1`;
     const { rows } = await dbPool.query(query, [playerId]);
     return rows[0];
+  },
+
+  async createTestDb(): Promise<void> {
+    // 1) Rastgele ülke seç
+    const randomIndex = Math.floor(Math.random() * COUNTRIES.length);
+    const randomCountry = COUNTRIES[randomIndex];
+
+    console.log(`Creating "JohnDoe" with random country=${randomCountry}`);
+
+    // 2) DB'de yeni player oluştur (örn. "JohnDoe" adında, country = randomCountry)
+    //    Varsayım: playerRepository.createPlayer(name, country) => { playerId, name, country, ... }
+
+
+    // 3) 100 kez rastgele skor (0-1000) üretip "earn" / scoreboard'a ekleyelim
+    for (let i = 0; i < 100; i++) {
+      // 0-1000 arası
+      const randomAmount = Math.floor(Math.random() * 1001);
+      const newPlayer = await playerRepository.createPlayer('JohnDoe', randomCountry);
+      await leaderboardService.earn(newPlayer.playerId,randomAmount);
+      // Earn mantığı: scoreboard'a "JohnDoe" playerId'ye randomAmount ekliyoruz
+      // Bu, "incrementScore" veya "zIncrBy" gibi bir şey olabilir.
+      console.log(`Iteration ${i + 1}: Earn = ${randomAmount}`);
+    }
+
+    console.log('Test DB setup complete. "JohnDoe" now has 100 random earn calls.');
   }
 
 }
