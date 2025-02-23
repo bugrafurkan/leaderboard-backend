@@ -7,7 +7,7 @@ import { initQueue } from './config/queue';
 import { testDBConnection, initializeDatabase } from './config/database';
 import cron from 'node-cron';
 import { leaderboardService } from './services/leaderboardService';
-import { playerRepository} from "./repositories/playerRepository";
+import { LeaderboardPlayerInfo } from './models/leaderboard.types'
 
 const PORT = ENV.PORT || 3000;
 
@@ -22,8 +22,15 @@ async function startServer() {
   console.log('player');
   const result = await leaderboardService.getLeaderboard();
   console.log('\n=== TOP 100 LEADERBOARD ===\n');
-  result.top100.forEach((player, index) => {
-    console.log(`${(index + 1).toString().padStart(2, ' ')}. ${player.playerId} | ${player.score} }`);
+  result.top100Entries.forEach((entry: LeaderboardPlayerInfo, index: number) => {
+    console.log(
+      `${(index + 1).toString().padStart(2, ' ')}. ` +
+      `ID: ${entry.playerId} | ` +
+      `Name: ${entry.player?.name || 'Unknown'} | ` +
+      `Country: ${entry.player?.country || 'Unknown'} | ` +
+      `Money: ${entry.player?.money || 'Unknown'} | ` +
+      `Score: ${entry.score}`
+    );
   });
 
 

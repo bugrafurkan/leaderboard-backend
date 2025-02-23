@@ -1,6 +1,6 @@
 import { leaderboardRepository } from '../repositories/leaderboardRepository';
 import { playerRepository } from '../repositories/playerRepository';
-import { LeaderboardEntry } from '../models/LeaderboardEntry';
+import { LeaderboardPlayerInfo } from '../models/leaderboard.types';
 
 /**
  * Dağıtım Oranları:
@@ -16,14 +16,34 @@ export const leaderboardService = {
     console.log('leaderboardService1');
     const top100 = await leaderboardRepository.getTop100();
     console.log('leaderboardService11', top100.length);
-    let searchedPlayerRange: LeaderboardEntry[] | null = null;
+    const top100Entries: LeaderboardPlayerInfo[] = await Promise.all(
+      top100.map(async (entry) => {
+        const player = await playerRepository.findById(entry.playerId);
+        return {
+          ...entry,
+          player
+        };
+      })
+    );
+
+    let searchedPlayerRange: LeaderboardPlayerInfo[] | null = null;
 
     if (searchPlayerId) {
-      searchedPlayerRange = await leaderboardRepository.getPlayerRange(searchPlayerId);
-    }
+      const rangeEntries = await leaderboardRepository.getPlayerRange(searchPlayerId);
+      if (rangeEntries) {
+        searchedPlayerRange = await Promise.all(
+          rangeEntries.map(async (entry) => {
+            const player = await playerRepository.findById(entry.playerId);
+            return {
+              ...entry,
+              player
+            };
+          })
+        );
+      }    }
 
     return {
-      top100,
+      top100Entries,
       searchedPlayerRange
     };
   },
