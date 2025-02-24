@@ -49,7 +49,7 @@ export const playerRepository = {
   },
 
   async updateMoney(playerId: number, newAmount: number): Promise<void> {
-    await dbPool.query(`UPDATE players SET money=$1 WHERE playerId=$2`, [newAmount, playerId]);
+    await dbPool.query(`UPDATE players SET "money"=$1 WHERE "playerId"=$2`, [newAmount, playerId]);
   },
 
   async listPlayer(playerId: number): Promise<Player | null> {
@@ -65,7 +65,7 @@ export const playerRepository = {
     const randomIndex = Math.floor(Math.random() * COUNTRIES.length);
     const randomCountry = COUNTRIES[randomIndex];
 
-    console.log(`Creating "JohnDoe" with random country=${randomCountry}`);
+    console.log(`Creating "JohnyyDoe" with random country=${randomCountry}`);
 
     // 2) DB'de yeni player oluştur (örn. "JohnDoe" adında, country = randomCountry)
     //    Varsayım: playerRepository.createPlayer(name, country) => { playerId, name, country, ... }
@@ -75,7 +75,7 @@ export const playerRepository = {
     for (let i = 0; i < 100; i++) {
       // 0-1000 arası
       const randomAmount = Math.floor(Math.random() * 1001);
-      const newPlayer = await playerRepository.createPlayer('JohnDoe', randomCountry);
+      const newPlayer = await playerRepository.createPlayer('FFFJohnDoe', randomCountry);
       await leaderboardService.earn(newPlayer.playerId,randomAmount);
       // Earn mantığı: scoreboard'a "JohnDoe" playerId'ye randomAmount ekliyoruz
       // Bu, "incrementScore" veya "zIncrBy" gibi bir şey olabilir.

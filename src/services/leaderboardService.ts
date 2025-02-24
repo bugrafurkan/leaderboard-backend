@@ -145,7 +145,7 @@ export const leaderboardService = {
 // Helper function: raise money on DB
 async function addMoneyToPlayer(playerId: number, amount: number) {
   if (amount <= 0) return;
-  const player = await playerRepository.findById(playerId);
+  const player = await playerRepository.findById(playerId);;
   if (player) {
     const newAmount = player.money + amount;
     await playerRepository.updateMoney(playerId, newAmount);
