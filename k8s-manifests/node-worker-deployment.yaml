@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: node-worker
 spec:
-  replicas: 10
+  replicas: 100
   selector:
     matchLabels:
       app: node-worker

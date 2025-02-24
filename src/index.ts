@@ -7,7 +7,7 @@ import { initQueue } from './config/queue';
 import { testDBConnection, initializeDatabase } from './config/database';
 import cron from 'node-cron';
 import { leaderboardService } from './services/leaderboardService';
-import { playerRepository} from "./repositories/playerRepository";
+
 
 const PORT = ENV.PORT || 3000;
 
@@ -18,7 +18,6 @@ async function startServer() {
   await testDBConnection();
   await connectRedis();
   await initQueue();
-  //await playerRepository.createTestDb();
 
   const httpServer = createServer(app);
 

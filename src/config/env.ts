@@ -14,9 +14,9 @@ export const ENV = {
   DB_PASS: process.env.DB_PASS || 'postgres',
   DB_NAME: process.env.DB_NAME || 'leaderboard_db',
   DB_ROLE: process.env.DB_ROLE || 'admin',
-
+  SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL || 'http://localhost:3000',
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
-
+  RABBITMQ_URL: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
   CRON_DISTRIBUTION_TIME: process.env.CRON_DISTRIBUTION_TIME || '0 23 * * 0'
 
 };
