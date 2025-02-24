@@ -26,13 +26,13 @@ export const pdfController = {
       });
       doc.moveDown();
 
-      if(leaderboardData.top100.length === 0){
+      if(leaderboardData.top100Entries.length === 0){
         doc.text('No data found.');
       }else {
         doc.fontSize(14);
         doc.text('Rank | PlayerId | Score');
         doc.moveDown();
-        leaderboardData.top100.forEach((entry,index) => {
+        leaderboardData.top100Entries.forEach((entry,index) => {
           const rank = index + 1;
           doc.text('${rank} | ${entry.playerId} | ${entry.score}');
         });

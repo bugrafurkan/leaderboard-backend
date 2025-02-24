@@ -3,7 +3,7 @@ import { playerRepository } from '../repositories/playerRepository';
 import { LeaderboardPlayerInfo } from '../models/leaderboard.types';
 
 /**
- * Dağıtım Oranları:
+ * Prize Rates:
  * 1. player: %20
  * 2. player: %15
  * 3. player: %10
@@ -103,7 +103,7 @@ export const leaderboardService = {
     remaining = prizePool * 0.55;
 
     // Rest for after fourth player
-    const restPlayers = top100.slice(3); // 4. sıralamadan sonrakiler
+    const restPlayers = top100.slice(3); // rest of the players
     let eachShare = 0;
     if (restPlayers.length > 0) {
       eachShare = remaining / restPlayers.length;
@@ -145,7 +145,7 @@ export const leaderboardService = {
 // Helper function: raise money on DB
 async function addMoneyToPlayer(playerId: number, amount: number) {
   if (amount <= 0) return;
-  const player = await playerRepository.findById(playerId);;
+  const player = await playerRepository.findById(playerId);
   if (player) {
     const newAmount = player.money + amount;
     await playerRepository.updateMoney(playerId, newAmount);

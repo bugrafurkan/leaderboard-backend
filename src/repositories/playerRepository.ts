@@ -1,6 +1,5 @@
 import { dbPool } from "../config/database";
 import { Player} from "../models/Player";
-import { leaderboardRepository} from "./leaderboardRepository";
 import {leaderboardService} from "../services/leaderboardService";
 
 //Random countries
@@ -61,7 +60,7 @@ export const playerRepository = {
   },
 
   async createTestDb(): Promise<void> {
-    // 1) Rastgele ülke seç
+    // 1) Random country
     const randomIndex = Math.floor(Math.random() * COUNTRIES.length);
     const randomCountry = COUNTRIES[randomIndex];
 
