@@ -13,8 +13,17 @@ spec:
         app: node-worker
     spec:
       containers:
+        - name: postgres-container
+          image: postgres:16.8
+
+        - name: rabbitmq-container
+          image: rabbitmq:4.0-alpine
+
+        - name: redis-container
+          image: redis:7.4.2-alpine
+
         - name: node-worker-container
-          image: your-registry/node-project:latest
+          image: bfkbt14/node-project:latest
           # Worker mod
           command: ["node", "dist/worker.js"]
           env:
