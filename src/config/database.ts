@@ -3,11 +3,11 @@ import { ENV } from './env';
 
 // Main pool for PlayerRepository
 export const dbPool = new Pool({
-  host: ENV.DB_HOST,
-  port: ENV.DB_PORT,
-  user: ENV.DB_USER,
-  password: ENV.DB_PASS,
-  database: 'postgres'  // Başlangıçta postgres veritabanına bağlanıyoruz
+  host: ENV.DB_HOST || 'postgres-db',
+  port: ENV.DB_PORT || 5432,
+  user: ENV.DB_USER || 'postgres',
+  password: ENV.DB_PASS || 'postgres',
+  database: ENV.DB_NAME || 'leaderboard_db'  // Başlangıçta postgres veritabanına bağlanıyoruz
 });
 
 // Application pool that will be used after initialization
@@ -73,10 +73,10 @@ export async function initializeDatabase() {
 
     // Create a new pool for the target database
     const targetPool = new Pool({
-      host: ENV.DB_HOST,
-      port: ENV.DB_PORT,
-      user: ENV.DB_USER,
-      password: ENV.DB_PASS,
+      host: ENV.DB_HOST || 'postgres-db',
+      port: ENV.DB_PORT || 5432,
+      user: ENV.DB_USER || 'postgres',
+      password: ENV.DB_PASS || 'postgres',
       database: ENV.DB_NAME  // Yeni oluşturulan veritabanına bağlan
     });
 
@@ -116,10 +116,10 @@ export async function initializeDatabase() {
       // Initialize application pool
       appPool = new Pool({
         user: ENV.DB_ROLE,
-        host: ENV.DB_HOST,
-        database: ENV.DB_NAME,
-        password: ENV.DB_PASS,
-        port: ENV.DB_PORT,
+        host: ENV.DB_HOST || 'postgres-db',
+        database: ENV.DB_NAME || 'leaderboard_db',
+        password: ENV.DB_PASS || 'postgres',
+        port: ENV.DB_PORT || 5432
       });
 
       console.log('Database initialization completed successfully');

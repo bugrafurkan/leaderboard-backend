@@ -9,7 +9,7 @@ async function startWorker(){
   await connectRedis();
   await testDBConnection();
 
-  const conn = await amqplib.connect(process.env.RABBITMQ_URL || 'amqp://localhost:5672');
+  const conn = await amqplib.connect(process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672');
   const channel = await conn.createChannel();
   await channel.assertQueue('earn-queue');
   await channel.assertQueue('create-player-queue');

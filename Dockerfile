@@ -28,5 +28,5 @@ COPY --from=builder /app/package*.json ./
 
 # 8) Default olarak API (index.js) çalıştır
 #    Kubernetes'te worker için override edeceğiz
-EXPOSE 3000
+
 CMD ["node","dist/index.js"]
