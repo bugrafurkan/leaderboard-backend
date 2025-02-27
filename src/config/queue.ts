@@ -5,7 +5,7 @@ let channel: amqplib.Channel;
 export async function initQueue(): Promise<void> {
   console.log("Initializing queue...");
   console.log('Connecting to RabbitMQ...');
-  const conn = await amqplib.connect(process.env.RABBITMQ_URL || 'amqp://localhost:5672');
+  const conn = await amqplib.connect(process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672');
   channel = await conn.createChannel();
   await channel.assertQueue('earn-queue');
   console.log('RabbitMQ channel ready.');
