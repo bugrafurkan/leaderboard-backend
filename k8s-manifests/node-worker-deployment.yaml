@@ -40,6 +40,6 @@ spec:
             periodSeconds: 5
           livenessProbe:
             exec:
-              ommand: [ "curl", "-f", "http://localhost:3000/health" ]
+              command: [ "curl", "-f", "http://localhost:3000/health" ]
             initialDelaySeconds: 30
             periodSeconds: 10
