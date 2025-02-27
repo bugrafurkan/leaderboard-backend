@@ -194,6 +194,21 @@ services:
           cpus: '0.25'
           memory: 256M
 
+  #Frontend
+  leaderboard-frontend:
+    build:
+      context: ../leaderboard-frontend
+      dockerfile: Dockerfile
+    container_name: leaderboard-frontend
+    depends_on:
+      - leaderboard-backend
+    networks:
+      - leaderboard-network
+    ports:
+      - 8080:80
+    restart: unless-stopped
+
+
   # Worker Service (async tasks)
   worker:
     image: leaderboard-backend:latest
