@@ -78,6 +78,12 @@ services:
       - leaderboard-network
     depends_on:
       - redis-master-1
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   redis-master-3:
     image: redis:latest
@@ -91,6 +97,12 @@ services:
       - leaderboard-network
     depends_on:
       - redis-master-2
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # Redis cluster setup helper
   redis-cluster-init:
@@ -151,8 +163,8 @@ services:
         condition: service_healthy
       redis-master-1:
         condition: service_healthy
-    ports:
-      - "3000:3000"
+    #ports:
+      #- "3000:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
