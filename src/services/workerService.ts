@@ -1,6 +1,7 @@
 import {redisClient} from '../config/redis';
 import { leaderboardRepository } from '../repositories/leaderboardRepository';
 import { playerRepository } from '../repositories/playerRepository';
+import { incrementDistributedMoney } from '../middlewares/metricsMiddleware';
 
 
 
@@ -22,7 +23,7 @@ export const workerService = {
       const rank = await leaderboardRepository.getRank(playerId);
       return rank ?? 999999;
     }
-
+    incrementDistributedMoney(difference);
     // score => newScore
     await leaderboardRepository.incrementScore(playerId, newScore);
 
