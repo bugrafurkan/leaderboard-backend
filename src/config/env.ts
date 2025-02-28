@@ -13,7 +13,7 @@ export const ENV = {
   DB_PASS: process.env.DB_PASS || 'postgres',
   DB_NAME: process.env.DB_NAME || 'leaderboard_db',
   DB_ROLE: process.env.DB_ROLE || 'admin',
-  SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL || 'http://localhost:3000',
+  SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL || 'http://34.106.62.0',
 
   // Redis bağlantı bilgileri - hem tek URL hem de cluster node'ları destekliyor
   REDIS_URL: process.env.REDIS_URL || 'redis://redis-service:6379',

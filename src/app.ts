@@ -6,7 +6,15 @@ import { setupSwaggerUi } from './config/swagger';
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://leaderboard-frontend-eight.vercel.app',
+    'https://leaderboard-frontend-dgyr60wr2-bugrafurkans-projects.vercel.app',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Swagger

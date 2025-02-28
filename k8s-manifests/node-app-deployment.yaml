@@ -45,7 +45,7 @@ spec:
             - name: REDIS_CLUSTER_NODES
               value: "redis-cluster-0.redis-service:6379,redis-cluster-1.redis-service:6379,redis-cluster-2.redis-service:6379"
             - name: SOCKET_SERVER_URL
-              value: "http://<your-loadbalancer-ip>"
+              value: "http://34.106.62.0"
           readinessProbe:
             httpGet:
               path: /health
