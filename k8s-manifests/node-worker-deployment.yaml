@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: node-worker
 spec:
-  replicas: 100
+  replicas: 2
   selector:
     matchLabels:
       app: node-worker
@@ -13,15 +13,6 @@ spec:
         app: node-worker
     spec:
       containers:
-        - name: postgres-container
-          image: postgres:16.8
-
-        - name: rabbitmq-container
-          image: rabbitmq:4.0-alpine
-
-        - name: redis-container
-          image: redis:7.4.2-alpine
-
         - name: node-worker-container
           image: bfkbt14/leaderboard-backend:latest
           # Worker mod
@@ -31,15 +22,17 @@ spec:
               value: "amqp://guest:guest@rabbitmq:5672"
             - name: REDIS_CLUSTER_NODES
               value: "redis-cluster-0.redis-service:6379,redis-cluster-1.redis-service:6379,redis-cluster-2.redis-service:6379"
-            - name: REDIS_URL
-              value: "redis://redis-standalone:6379"
+            #- name: REDIS_URL
+            #  value: "redis://redis-standalone:6379"
           readinessProbe:
             exec:
               command: [ "curl", "-f", "http://localhost:3000/health" ]
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
+            timeoutSeconds: 5
           livenessProbe:
             exec:
               command: [ "curl", "-f", "http://localhost:3000/health" ]
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
+            timeoutSeconds: 5

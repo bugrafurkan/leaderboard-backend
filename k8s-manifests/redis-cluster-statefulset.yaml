@@ -16,7 +16,7 @@ metadata:
   name: redis-cluster
 spec:
   serviceName: "redis-service"
-  replicas: 6
+  replicas: 3
   selector:
     matchLabels:
       app: redis-cluster
@@ -42,3 +42,17 @@ spec:
         resources:
           requests:
             storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-standalone
+spec:
+  selector:
+    app: redis-cluster
+    stateful.kubernetes.io/pod-name: redis-cluster-0
+  ports:
+    - port: 6379
+      targetPort: 6379

@@ -1,4 +1,3 @@
-// @ts-ignore
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -15,8 +14,11 @@ export const ENV = {
   DB_NAME: process.env.DB_NAME || 'leaderboard_db',
   DB_ROLE: process.env.DB_ROLE || 'admin',
   SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL || 'http://localhost:3000',
-  REDIS_URL: process.env.REDIS_URL || 'redis://redis-standalone:6379',
+
+  // Redis bağlantı bilgileri - hem tek URL hem de cluster node'ları destekliyor
+  REDIS_URL: process.env.REDIS_URL || 'redis://redis-service:6379',
+  REDIS_CLUSTER_NODES: process.env.REDIS_CLUSTER_NODES || 'redis://redis-cluster-0.redis-service:6379,redis://redis-cluster-1.redis-service:6379,redis://redis-cluster-2.redis-service:6379',
+
   RABBITMQ_URL: process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672',
   CRON_DISTRIBUTION_TIME: process.env.CRON_DISTRIBUTION_TIME || '0 23 * * 0'
-
 };

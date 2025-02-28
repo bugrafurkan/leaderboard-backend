@@ -8,8 +8,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: node-worker
-  minReplicas: 100
-  maxReplicas: 1000
+  minReplicas: 2
+  maxReplicas: 5
   # v2 HPA metrics:
   metrics:
     - type: Resource
