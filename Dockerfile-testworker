@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Package.json ve package-lock.json kopyala
+COPY package*.json ./
+RUN npm install
+
+# Kodları kopyala
+COPY . .
+
+# TypeScript derlemesi
+RUN npm run build
+
+# testWorkerService.ts'i çalıştırmak için komut
+# (dist/testWorkerService.js dosyasını tetikleyebiliriz)
+CMD ["node", "dist/testWorkerService.js"]

@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-worker-service-job
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: test-worker-service-pod
+    spec:
+      containers:
+        - name: test-worker-service
+          image: bfkbt14/test-worker-service:latest
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: DB_HOST
+              value: "postgres-db" # K8s'te postgres'in Service adı veya DNS
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASS
+              value: "postgres"
+            - name: DB_NAME
+              value: "leaderboard_db"
+            - name: REDIS_URL
+              value: "redis://redis-service:6379"
+            - name: RABBITMQ_URL
+              value: "amqp://guest:guest@rabbitmq:5672"
+            # vb. environment variables
+          # Kaynak limitleri opsiyonel
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      restartPolicy: Never
